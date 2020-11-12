@@ -32,7 +32,10 @@ class ArticleController extends Controller
      */
     public function create()
     {
-        return view('admin.posts.create');
+
+        $tags = Tag::all();
+
+        return view('admin.posts.create', compact('tags'));
     }
 
     /**
@@ -55,21 +58,26 @@ class ArticleController extends Controller
         );
 
         // $path = Storage::disk('public')->put('images', $data['image']);
-
-        $imageOriginalName = $data["image"]->getClientOriginalName();
-        $path = Storage::disk("public")->putFileAs("images", $data["image"], rand(1,10).$imageOriginalName);
-
-
         $newArticle = new Article;
-        
+
+        if(isset($data['image']))
+        {
+            $imageOriginalName = $data["image"]->getClientOriginalName();
+            $path = Storage::disk("public")->putFileAs("images", $data["image"], rand(1,10).$imageOriginalName);
+
+            $newArticle->image = $path;
+
+        }
+
         $newArticle->user_id = Auth::id();
         $newArticle->title = $data["title"];
         $newArticle->slug = $data["slug"];
         $newArticle->content = $data["content"];
-        $newArticle->image = $path;
 
         $newArticle->save();
-
+        
+        $newArticle->tags()->sync($data["tags"]);
+        
         return redirect()->route("admin.posts.show", $newArticle->slug);
         
     }
@@ -83,8 +91,9 @@ class ArticleController extends Controller
     public function show($slug)
     {
         $article = Article::where('slug', $slug)->get()->first();
+        $tags = $article->tags;
 
-        return view('admin.posts.show', compact('article'));
+        return view('admin.posts.show', compact('article', 'tags'));
     }
 
     /**

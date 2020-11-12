@@ -40,12 +40,24 @@
                   </ul>
               </div>
             @endif
+
+            <div class="tags">
+                <h2>Scegli dei tag</h2>
+                <div class="form-check">
+                    @foreach($tags as $tag)
+                        <span>
+                        <input id="tag-{{$tag->id}}" name="tags[]" value="{{$tag->id}}" type="checkbox">
+                        <label for="tag-{{$tag->id}}">{{$tag->name}}</label>
+                        </span>
+                    @endforeach
+                </div>
+            </div>
         
             <button type="submit" class="btn btn-primary btn-success">Crea</button>
 
             <a href={{route("admin.posts.index")}} class="btn btn-primary"><i class="fas fa-long-arrow-alt-left"></i> Indietro</a>
             
-          </form>
+        </form>
     </div>
     
 @endsection

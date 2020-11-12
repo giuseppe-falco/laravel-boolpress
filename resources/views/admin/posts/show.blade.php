@@ -19,4 +19,12 @@
 <p>{{$article->slug}}</p>
 <h3>contentuto</h3>
 <p>{{$article->content}}</p>
+
+<h4>Tag</h4>
+<ul>
+    @foreach ($tags as $tag)
+        <li>{{$tag->name}}</li>
+    @endforeach
+</ul>
+
 @endsection
