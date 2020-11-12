@@ -23,6 +23,7 @@ class ArticleSeeder extends Seeder
             $newArticle->user_id = $user->id;
             $newArticle->title = $faker->sentence(6, true);
             $newArticle->slug = str::of($newArticle->title)->slug('-');
+            $newArticle->content = $faker->sentence(20);
 
             $newArticle ->save();
         }

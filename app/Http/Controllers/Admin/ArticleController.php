@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Article;
+use App\Tag;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Storage;
 
 class ArticleController extends Controller
 {
@@ -29,7 +32,7 @@ class ArticleController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.posts.create');
     }
 
     /**
@@ -40,7 +43,27 @@ class ArticleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->all();
+
+        $request->validate(
+            [
+                'title' => 'required',
+                'slug' => 'required|unique:articles',
+                'content' => 'required',
+            ]
+        );
+
+        $newArticle = new Article;
+        
+        $newArticle->user_id = Auth::id();
+        $newArticle->title = $data["title"];
+        $newArticle->slug = $data["slug"];
+        $newArticle->content = $data["content"];
+
+        $newArticle->save();
+
+        return redirect()->route("admin.posts.show", $newArticle->slug);
+        
     }
 
     /**
@@ -62,9 +85,11 @@ class ArticleController extends Controller
      * @param  \App\Article  $article
      * @return \Illuminate\Http\Response
      */
-    public function edit(Article $article)
+    public function edit($slug)
     {
-        //
+        $article = Article::where('slug', $slug)->first();
+
+        return view('admin.posts.edit', ['article'=>$article]);
     }
 
     /**
@@ -74,9 +99,27 @@ class ArticleController extends Controller
      * @param  \App\Article  $article
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Article $article)
+    public function update(Request $request, $slug)
     {
-        //
+        $data = $request->all();
+
+        $request->validate([
+            "title" => "required",
+            "slug" => "required",
+            "content" => "required"
+        ]);
+
+        $article = Article::where('slug', $slug)->get()->first();
+
+        $article->user_id = Auth::id();
+        $article->title = $data["title"];
+        $article->slug = $data["slug"];
+        $article->content = $data["content"];
+
+        
+        $article->update();
+
+        return redirect()->route("admin.posts.show", $slug);
     }
 
     /**
@@ -85,8 +128,10 @@ class ArticleController extends Controller
      * @param  \App\Article  $article
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Article $article)
+    public function destroy($slug)
     {
-        //
+        $article = Article::where('slug', $slug)->get()->first()->delete();
+
+        return redirect()->route('admin.posts.index');
     }
 }
