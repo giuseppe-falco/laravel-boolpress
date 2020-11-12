@@ -50,8 +50,15 @@ class ArticleController extends Controller
                 'title' => 'required',
                 'slug' => 'required|unique:articles',
                 'content' => 'required',
+                'image' => 'image'
             ]
         );
+
+        // $path = Storage::disk('public')->put('images', $data['image']);
+
+        $imageOriginalName = $data["image"]->getClientOriginalName();
+        $path = Storage::disk("public")->putFileAs("images", $data["image"], rand(1,10).$imageOriginalName);
+
 
         $newArticle = new Article;
         
@@ -59,6 +66,7 @@ class ArticleController extends Controller
         $newArticle->title = $data["title"];
         $newArticle->slug = $data["slug"];
         $newArticle->content = $data["content"];
+        $newArticle->image = $path;
 
         $newArticle->save();
 
@@ -106,7 +114,9 @@ class ArticleController extends Controller
         $request->validate([
             "title" => "required",
             "slug" => "required",
-            "content" => "required"
+            "content" => "required",
+            'image' => 'image'
+
         ]);
 
         $article = Article::where('slug', $slug)->get()->first();

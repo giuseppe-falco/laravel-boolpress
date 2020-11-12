@@ -5,7 +5,7 @@
 
     <div class="container">
         <h1>crea nuovo post</h1>
-        <form action="{{route('admin.posts.store')}}" enctype="multipart/form-data" method="POST">
+        <form action="{{route('admin.posts.store')}}" enctype="multipart/form-data" method="POST" enctype="multipart/form-data">
 
             @csrf
             @method("POST")
@@ -18,6 +18,11 @@
             <div class="form-group">
               <label for="slug">Slug</label>
               <input type="text" class="form-control" name="slug" id="slug" placeholder="Inserisci lo slug">
+            </div>
+
+            <div class="form-group">
+                <label for="slug">Image</label>
+                <input type="file" class="form-control" name="image" id="image" placeholder="Inserisci immagine" accept="image/x-png, image/gif, image/jpeg">
             </div>
 
             <div class="form-group">
@@ -37,7 +42,7 @@
             @endif
         
             <button type="submit" class="btn btn-primary btn-success">Crea</button>
-            
+
             <a href={{route("admin.posts.index")}} class="btn btn-primary"><i class="fas fa-long-arrow-alt-left"></i> Indietro</a>
             
           </form>
