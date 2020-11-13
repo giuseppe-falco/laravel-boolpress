@@ -1,0 +1,1 @@
+<h1>Grazie di aver creato il post {{$article->title}}</h1>

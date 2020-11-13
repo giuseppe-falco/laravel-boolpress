@@ -9,6 +9,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
+use App\Mail\SendNewMail;
+use Illuminate\Support\Facades\Mail;
 
 class ArticleController extends Controller
 {
@@ -76,8 +78,12 @@ class ArticleController extends Controller
 
         $newArticle->save();
         
-        $newArticle->tags()->sync($data["tags"]);
+        if(isset($data['tags'])){
+            $newArticle->tags()->sync($data["tags"]);
+        }
         
+        Mail::to($newArticle->user->email)->send(new SendNewMail($newArticle));
+
         return redirect()->route("admin.posts.show", $newArticle->slug);
         
     }
